@@ -1,0 +1,924 @@
+{
+  "info": {
+    "_postman_id": "4bdd6166-cea7-4d27-84a1-117560b91160",
+    "name": "Honnoi Partner Web Backoffice",
+    "description": "API collection for honnoi-partner-web-backoffice.\n\nMost POST bodies are AES-256-CBC encrypted into `{ \"payload\": \"<base64>\" }` before they reach the server (same convention as honnoi-account / honnoi-web-backoffice). The collection-level pre-request script auto-encrypts any plain JSON raw body using the `aesKey` / `aesIv` collection variables (same values as SECRETMANAGER_ID_AES_KEY / SECRETMANAGER_ID_AES_IV), EXCEPT `/auth/2fa/send-otp` and `/auth/2fa/verify`, which take plain JSON (they're guarded by the short-lived `pendingToken` JWT instead).\n\nFlow: `auth/login_bo_user` (staff) -> `partner_user/createPartnerUser` -> `auth/login` (partner) -> if `twofa_required`, `auth/2fa/send-otp` + `auth/2fa/verify` -> `partnerToken` is captured automatically into the collection variable and reused by the 2FA self-enrollment and partner self-service folders.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12270992",
+    "_collection_link": "https://go.postman.co/collection/12270992-4bdd6166-cea7-4d27-84a1-117560b91160?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login_bo_user (staff)",
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) pm.collectionVariables.set('staffToken', json.token);",
+                  "} catch (e) {}"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"staff01\",\n  \"password\": \"P@ssw0rd\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login_bo_user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login_bo_user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login (partner, username/password)",
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) pm.collectionVariables.set('partnerToken', json.token);",
+                  "    if (json.pendingToken) pm.collectionVariables.set('pendingToken', json.pendingToken);",
+                  "} catch (e) {}"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"partner01\",\n  \"password\": \"P@ssw0rd\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "google (start OAuth - open in browser, not Send)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "google/callback (browser redirect target only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google",
+                "callback"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2fa/send-otp (plain JSON, not encrypted)",
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.refCode) pm.collectionVariables.set('refCode', json.refCode);",
+                  "} catch (e) {}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"EMAIL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/2fa/send-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "2fa",
+                "send-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2fa/verify (plain JSON, not encrypted)",
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) pm.collectionVariables.set('partnerToken', json.token);",
+                  "} catch (e) {}"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"EMAIL\",\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/2fa/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "2fa",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "partner_user (staff-only)",
+      "item": [
+        {
+          "name": "createPartnerUser",
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.userId) pm.collectionVariables.set('userId', json.userId);",
+                  "} catch (e) {}"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John\",\n  \"lastname\": \"Doe\",\n  \"mobile\": \"0812345678\",\n  \"userName\": \"partner01\",\n  \"password\": \"P@ssw0rd\",\n  \"email\": \"partner01@example.com\",\n  \"userGroup\": \"PT\",\n  \"userLevel\": \"ST\",\n  \"userClass\": \"A\",\n  \"companyName\": \"Acme Co., Ltd.\",\n  \"department\": \"Sales\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/createPartnerUser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "createPartnerUser"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "editPartnerUser",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"companyName\": \"Acme Co., Ltd. (updated)\",\n  \"department\": \"Partnerships\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/editPartnerUser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "editPartnerUser"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getPartnerUser",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/getPartnerUser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "getPartnerUser"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "searchPartnerUser",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"Acme\",\n  \"page\": 1,\n  \"pageSize\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/searchPartnerUser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "searchPartnerUser"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "resetPartnerPassword",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"password\": \"NewP@ssw0rd\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/resetPartnerPassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "resetPartnerPassword"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deletePartnerUser",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/deletePartnerUser",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "deletePartnerUser"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "partner self-service",
+      "item": [
+        {
+          "name": "changePassword",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"P@ssw0rd\",\n  \"newPassword\": \"NewP@ssw0rd1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/changePassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "changePassword"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "uploadProfileImage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partner_user/uploadProfileImage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partner_user",
+                "uploadProfileImage"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2fa (partner self-enrollment)",
+      "item": [
+        {
+          "name": "status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2fa/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "email/requestOtp",
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.refCode) pm.collectionVariables.set('refCode', json.refCode);",
+                  "} catch (e) {}"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2fa/email/requestOtp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "email",
+                "requestOtp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "email/verify",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/2fa/email/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "email",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sms/requestOtp",
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.refCode) pm.collectionVariables.set('refCode', json.refCode);",
+                  "} catch (e) {}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2fa/sms/requestOtp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "sms",
+                "requestOtp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sms/verify",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/2fa/sms/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "sms",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "totp/setup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/2fa/totp/setup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "totp",
+                "setup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "totp/verify",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/2fa/totp/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "totp",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "disable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"EMAIL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/2fa/disable",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "2fa",
+                "disable"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const CryptoJS = require('crypto-js');",
+          "",
+          "const SKIP_EXACT_PATHS = ['/auth/2fa/send-otp', '/auth/2fa/verify'];",
+          "",
+          "(function encryptBodyIfNeeded() {",
+          "    if (pm.request.method === 'GET') return;",
+          "    if (!pm.request.body || pm.request.body.mode !== 'raw') return;",
+          "",
+          "    const pathParts = pm.request.url ? pm.request.url.path : [];",
+          "    const joinedPath = '/' + pathParts.join('/');",
+          "    if (SKIP_EXACT_PATHS.includes(joinedPath)) return;",
+          "",
+          "    const aesKeyB64 = pm.collectionVariables.get('aesKey');",
+          "    const aesIvB64 = pm.collectionVariables.get('aesIv');",
+          "",
+          "    if (!aesKeyB64 || !aesIvB64) {",
+          "        console.warn('[auto-encrypt] aesKey / aesIv not set - sending body as-is');",
+          "        return;",
+          "    }",
+          "",
+          "    const rawBody = pm.request.body.raw || '';",
+          "    let parsed;",
+          "    try {",
+          "        parsed = JSON.parse(rawBody);",
+          "    } catch (e) {",
+          "        return;",
+          "    }",
+          "",
+          "    const alreadyEncrypted =",
+          "        parsed && typeof parsed === 'object' &&",
+          "        Object.keys(parsed).length === 1 && 'payload' in parsed;",
+          "    if (!parsed || alreadyEncrypted) return;",
+          "",
+          "    const key = CryptoJS.enc.Base64.parse(aesKeyB64);",
+          "    const iv = CryptoJS.enc.Base64.parse(aesIvB64);",
+          "",
+          "    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(parsed), key, {",
+          "        iv: iv,",
+          "        mode: CryptoJS.mode.CBC,",
+          "        padding: CryptoJS.pad.Pkcs7",
+          "    });",
+          "",
+          "    const cipherBase64 = encrypted.ciphertext.toString(CryptoJS.enc.Base64);",
+          "    pm.request.body.update(JSON.stringify({ payload: cipherBase64 }));",
+          "})();"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "aesKey",
+      "value": "",
+      "description": "Base64 AES-256 key (same as SECRETMANAGER_ID_AES_KEY). Set as a secret in your environment, not here."
+    },
+    {
+      "key": "aesIv",
+      "value": "",
+      "description": "Base64 AES IV (same as SECRETMANAGER_ID_AES_IV). Set as a secret in your environment, not here."
+    },
+    {
+      "key": "staffToken",
+      "value": "",
+      "description": "Captured automatically from auth/login_bo_user"
+    },
+    {
+      "key": "partnerToken",
+      "value": "",
+      "description": "Captured automatically from auth/login or auth/2fa/verify"
+    },
+    {
+      "key": "pendingToken",
+      "value": "",
+      "description": "Captured automatically from auth/login when twofa_required is true"
+    },
+    {
+      "key": "refCode",
+      "value": "",
+      "description": "Captured automatically from the last OTP request"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "description": "Set after createPartnerUser to reuse in other partner_user requests"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+node_modules/
+/node_modules
+package-lock.json*
+
+# ENV
+.env
+.env-prod
+.env-uat
+
+.DS_Store
+
+# Google Cloud Key
+gf-uat-microservice-key.json
+google-cloud-key.json
+gf-uat-translate-api.json
+
+# Firebase Admin SDK
+*firebase-adminsdk*.json
+google-services.json
+GoogleService-Info.plist
+
+gcs-givingforward.json
+
+givingforward-microservice-key.json
+givingforward-translate-api.json
+Dockerfile
+.env.example
