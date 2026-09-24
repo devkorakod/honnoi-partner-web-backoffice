@@ -60,13 +60,29 @@ const partnerProfile = (user) => ({
 })
 
 const getEnabledTwoFaMethods = async (userId) => {
-  const rows = await honnoi('partner_2fa_method')
-    .select('method')
+  return await honnoi('partner_2fa_method')
+    .select('method', 'target')
     .where({ userId, enabled: 1 })
-  return rows.map((r) => r.method)
 }
 
-const issuePendingTwoFa = async (user, channel, methods) => {
+// mask like "jo***@gmail.com" — keep the first 2 chars of the local part
+const maskEmail = (email) => {
+  if (!email) return ''
+  const [local, domain] = String(email).split('@')
+  if (!domain) return email
+  const visibleLen = Math.min(2, local.length)
+  return `${local.slice(0, visibleLen)}${'*'.repeat(Math.max(local.length - visibleLen, 3))}@${domain}`
+}
+
+// mask like "099***1234" — keep the first 3 and last 4 digits
+const maskMobile = (mobile) => {
+  if (!mobile) return ''
+  const digits = String(mobile).replace(/\D/g, '')
+  if (digits.length < 7) return digits.replace(/./g, '*')
+  return `${digits.slice(0, 3)}${'*'.repeat(digits.length - 7)}${digits.slice(-4)}`
+}
+
+const issuePendingTwoFa = async (user, channel, enrolledMethods) => {
   const pendingToken = await encode.jwtEncodeCustom(
     { userId: user.userId, purpose: '2fa_pending', channel },
     `${PENDING_TOKEN_EXPIRES_MIN}m`
@@ -80,11 +96,21 @@ const issuePendingTwoFa = async (user, channel, methods) => {
     channel
   })
 
+  const methods = enrolledMethods.map((m) => m.method)
+
+  // masked email/mobile per enrolled method, so the frontend can show "send OTP to jo***@gmail.com"
+  const contacts = enrolledMethods.reduce((acc, m) => {
+    if (m.method === 'EMAIL') acc.email = maskEmail(m.target || user.email)
+    if (m.method === 'SMS') acc.mobile = maskMobile(m.target || user.mobile)
+    return acc
+  }, {})
+
   return {
     status_code: 200,
     status_phrase: status_code[200],
     twofa_required: true,
     methods,
+    contacts,
     pendingToken,
     expiresInMin: PENDING_TOKEN_EXPIRES_MIN
   }
@@ -125,13 +151,13 @@ const issueFullLogin = async (user, channel) => {
 }
 
 const continueAfterCredentialCheck = async (user, channel) => {
-  const methods = await getEnabledTwoFaMethods(user.userId)
+  const enrolledMethods = await getEnabledTwoFaMethods(user.userId)
 
-  if (!methods.length) {
+  if (!enrolledMethods.length) {
     return await issueFullLogin(user, channel)
   }
 
-  return await issuePendingTwoFa(user, channel, methods)
+  return await issuePendingTwoFa(user, channel, enrolledMethods)
 }
 
 const decodePendingToken = (pendingToken) => {
