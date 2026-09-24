@@ -473,8 +473,8 @@ module.exports = {
         refCode,
         status: '0',
         otp: otp || '',
-        email: method === 'EMAIL' ? identityValue : null,
-        mobile: method === 'SMS' ? identityValue : null,
+        email: method === 'EMAIL' ? identityValue : '',
+        mobile: method === 'SMS' ? identityValue : '',
         type: 'PARTNER',
         createDate: now(),
         updateDate: now()
