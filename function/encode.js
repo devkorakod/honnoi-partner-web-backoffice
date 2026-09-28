@@ -24,6 +24,10 @@ const aesEncrypt = async (plainText) => {
 const aesDecrypt = async (cipherText) => {
   return new Promise(async (resolve) => {
     try {
+      // no payload (e.g. CORS preflight / empty body) — nothing to decrypt
+      if (typeof cipherText !== 'string' || cipherText === '') {
+        return resolve({ payload: undefined })
+      }
       let bufSecret = Buffer.from(global.aesKey, 'base64')
       let bufIv = Buffer.from(global.aesIv, 'base64')
       let decipher = crypto.createDecipheriv('aes-256-cbc', bufSecret, bufIv)

@@ -28,7 +28,7 @@ const mapPartnerUserRow = (row) => {
 const mapPartnerUserRows = (rows = []) => rows.map(mapPartnerUserRow);
 
 const getPayload = async (data) => {
-  data = await encode.aesDecrypt(data.payload);
+  data = await encode.aesDecrypt(data?.payload);
   try {
     data = JSON.parse(data.payload);
   } catch (e) {

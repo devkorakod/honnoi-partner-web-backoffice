@@ -14,7 +14,7 @@ const PENDING_TOKEN_EXPIRES_MIN = parseInt(process.env.TWOFA_PENDING_TOKEN_EXPIR
 const now = () => dayjs().format('YYYY-MM-DD HH:mm:ss')
 
 const getPayload = async (data) => {
-  let decrypted = await encode.aesDecrypt(data.payload)
+  let decrypted = await encode.aesDecrypt(data?.payload)
   try {
     decrypted = JSON.parse(decrypted.payload)
   } catch (e) {

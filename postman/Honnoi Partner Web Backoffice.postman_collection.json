@@ -15,16 +15,13 @@
           "name": "login_bo_user (staff)",
           "event": [
             {
+              "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "try {",
-                  "    const json = pm.response.json();",
-                  "    if (json.token) pm.collectionVariables.set('staffToken', json.token);",
-                  "} catch (e) {}"
+                  "try {\n    const json = pm.response.json();\n    if (json.token) pm.collectionVariables.set('staffToken', json.token);\n} catch (e) {}"
                 ]
-              },
-              "listen": "test"
+              }
             }
           ],
           "request": {
@@ -37,7 +34,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userName\": \"staff01\",\n  \"password\": \"P@ssw0rd\"\n}",
+              "raw": "{\n  \"userName\": \"earthdev\",\n  \"password\": \"earthH01\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -61,17 +58,13 @@
           "name": "login (partner, username/password)",
           "event": [
             {
+              "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "try {",
-                  "    const json = pm.response.json();",
-                  "    if (json.token) pm.collectionVariables.set('partnerToken', json.token);",
-                  "    if (json.pendingToken) pm.collectionVariables.set('pendingToken', json.pendingToken);",
-                  "} catch (e) {}"
+                  "try {\n    const json = pm.response.json();\n    if (json.token) pm.collectionVariables.set('partnerToken', json.token);\n    if (json.pendingToken) pm.collectionVariables.set('pendingToken', json.pendingToken);\n} catch (e) {}"
                 ]
-              },
-              "listen": "test"
+              }
             }
           ],
           "request": {
@@ -84,7 +77,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userName\": \"partner01\",\n  \"password\": \"P@ssw0rd\"\n}",
+              "raw": "{\n  \"userName\": \"partner02\",\n  \"password\": \"earthH01\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -145,16 +138,13 @@
           "name": "2fa/send-otp (plain JSON, not encrypted)",
           "event": [
             {
+              "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "try {",
-                  "    const json = pm.response.json();",
-                  "    if (json.refCode) pm.collectionVariables.set('refCode', json.refCode);",
-                  "} catch (e) {}"
-                ],
-                "type": "text/javascript"
-              },
-              "listen": "test"
+                  "try {\n    const json = pm.response.json();\n    if (json.refCode) pm.collectionVariables.set('refCode', json.refCode);\n} catch (e) {}"
+                ]
+              }
             }
           ],
           "request": {
@@ -167,7 +157,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"EMAIL\"\n}",
+              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"SMS\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -192,16 +182,13 @@
           "name": "2fa/verify (plain JSON, not encrypted)",
           "event": [
             {
+              "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "try {",
-                  "    const json = pm.response.json();",
-                  "    if (json.token) pm.collectionVariables.set('partnerToken', json.token);",
-                  "} catch (e) {}"
+                  "try {\n    const json = pm.response.json();\n    if (json.token) pm.collectionVariables.set('partnerToken', json.token);\n} catch (e) {}"
                 ]
-              },
-              "listen": "test"
+              }
             }
           ],
           "request": {
@@ -214,7 +201,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"EMAIL\",\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"123456\"\n}",
+              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"SMS\",\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"243604\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -244,16 +231,13 @@
           "name": "createPartnerUser",
           "event": [
             {
+              "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "try {",
-                  "    const json = pm.response.json();",
-                  "    if (json.userId) pm.collectionVariables.set('userId', json.userId);",
-                  "} catch (e) {}"
+                  "try {\n    const json = pm.response.json();\n    if (json.userId) pm.collectionVariables.set('userId', json.userId);\n} catch (e) {}"
                 ]
-              },
-              "listen": "test"
+              }
             }
           ],
           "request": {
@@ -270,7 +254,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John\",\n  \"lastname\": \"Doe\",\n  \"mobile\": \"0812345678\",\n  \"userName\": \"partner01\",\n  \"password\": \"P@ssw0rd\",\n  \"email\": \"partner01@example.com\",\n  \"userGroup\": \"PT\",\n  \"userLevel\": \"ST\",\n  \"userClass\": \"A\",\n  \"companyName\": \"Acme Co., Ltd.\",\n  \"department\": \"Sales\"\n}",
+              "raw": "{\n  \"name\": \"John\",\n  \"lastname\": \"Doe\",\n  \"mobile\": \"0812345678\",\n  \"userName\": \"partner03\",\n  \"password\": \"earthH01\",\n  \"email\": \"partner03@example.com\",\n  \"userGroup\": \"PT\",\n  \"userLevel\": \"ST\",\n  \"userClass\": \"A\",\n  \"companyName\": \"Acme Co., Ltd.\",\n  \"department\": \"Sales\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -629,7 +613,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"123456\"\n}",
+              "raw": "{\n  \"refCode\": \"HUSOWJ\",\n  \"otp\": \"724820\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -752,6 +736,16 @@
         {
           "name": "totp/verify",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [
               {
@@ -765,7 +759,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"code\": \"123456\"\n}",
+              "raw": "{\n  \"code\": \"349836\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

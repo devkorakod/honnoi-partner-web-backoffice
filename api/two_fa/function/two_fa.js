@@ -12,7 +12,7 @@ const OTP_DAILY_LIMIT = parseInt(process.env.OTP_DAILY_LIMIT || "10", 10);
 const now = () => dayjs().format("YYYY-MM-DD HH:mm:ss");
 
 const getPayload = async (data) => {
-  data = await encode.aesDecrypt(data.payload);
+  data = await encode.aesDecrypt(data?.payload);
   try {
     data = JSON.parse(data.payload);
   } catch (e) {
@@ -256,13 +256,18 @@ module.exports = {
       data = await getPayload(data);
       const { code } = data || {};
       const userId = auth?.userId;
+console.log(code,userId);
 
       const user = await honnoi("partner_user").where({ userId }).whereNull("deleteUserDate").first();
+      console.log(user);
+      
       if (!user || !user.authenToken) {
         return { status_code: 301, status_phrase: status_code[10019], message: status_code[10019] };
       }
 
       const valid = totp.verifyToken(user.authenToken, code);
+      console.log(valid);
+      
       if (!valid) return { status_code: 301, status_phrase: status_code[10021], message: status_code[10021] };
 
       await honnoi("partner_2fa_method")
