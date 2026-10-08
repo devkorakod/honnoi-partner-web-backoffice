@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const dayjs = require('dayjs')
 const axios = require('axios')
 const encode = require('../../../function/encode')
@@ -39,6 +40,22 @@ const insertLoginLog = async ({ userId, userName, mobileNo, result, channel }) =
     })
   } catch (error) {
     console.log('insertLoginLog error:', error)
+  }
+}
+
+const insertBoLoginLog = async ({ staffId, userName, mobile, result, channel }) => {
+  try {
+    await honnoi('bo_login_log').insert({
+      logInId: `BOLOG${dayjs().format('YYYYMMDD')}-${crypto.randomUUID()}`,
+      createDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      staffId: staffId || '',
+      userName: userName || '',
+      mobile: mobile || '',
+      result: result || '',
+      channel: channel || ''
+    })
+  } catch (error) {
+    console.log('insertBoLoginLog error:', error)
   }
 }
 
@@ -188,6 +205,8 @@ module.exports = {
       const user = await honnoi('bo_user').where({ userName }).first()
 
       if (!user) {
+        await insertBoLoginLog({ userName, result: 'NOT_FOUND', channel: 'PASSWORD' })
+
         return {
           status_code: 301,
           status_phrase: status_code[301],
@@ -204,6 +223,8 @@ module.exports = {
           loginBlock: 1,
           updateDate: now()
         })
+
+        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: 'BLOCKED', channel: 'PASSWORD' })
 
         return {
           status_code: 301,
@@ -226,6 +247,8 @@ module.exports = {
           loginBlock: nextLoginBlock,
           updateDate: now()
         })
+
+        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: 'INVALID_PASSWORD', channel: 'PASSWORD' })
 
         return {
           status_code: 301,
@@ -260,6 +283,8 @@ module.exports = {
         changePassword: user.changePassword,
         profileImgUrl: user.profileImgUrl || null
       }
+
+      await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: 'SUCCESS', channel: 'PASSWORD' })
 
       return {
         status_code: 200,
