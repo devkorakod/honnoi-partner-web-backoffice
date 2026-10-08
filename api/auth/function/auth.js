@@ -205,7 +205,7 @@ module.exports = {
       const user = await honnoi('bo_user').where({ userName }).first()
 
       if (!user) {
-        await insertBoLoginLog({ userName, result: 'NOT_FOUND', channel: 'PASSWORD' })
+        await insertBoLoginLog({ userName, result: '0', channel: 'PASSWORD' })
 
         return {
           status_code: 301,
@@ -224,7 +224,7 @@ module.exports = {
           updateDate: now()
         })
 
-        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: 'BLOCKED', channel: 'PASSWORD' })
+        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '0', channel: 'PASSWORD' })
 
         return {
           status_code: 301,
@@ -248,7 +248,7 @@ module.exports = {
           updateDate: now()
         })
 
-        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: 'INVALID_PASSWORD', channel: 'PASSWORD' })
+        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '0', channel: 'PASSWORD' })
 
         return {
           status_code: 301,
@@ -284,7 +284,7 @@ module.exports = {
         profileImgUrl: user.profileImgUrl || null
       }
 
-      await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: 'SUCCESS', channel: 'PASSWORD' })
+      await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '1', channel: 'PASSWORD' })
 
       return {
         status_code: 200,
@@ -334,7 +334,7 @@ module.exports = {
       }
 
       if (String(user.loginBlock) === '1') {
-        await insertLoginLog({ userId: user.userId, userName, mobileNo: user.mobile, result: 'BLOCKED', channel: 'PASSWORD' })
+        await insertLoginLog({ userId: user.userId, userName, mobileNo: user.mobile, result: '0', channel: 'PASSWORD' })
         return {
           status_code: 301,
           status_phrase: status_code[10017],
@@ -356,7 +356,7 @@ module.exports = {
           updateDate: now()
         })
 
-        await insertLoginLog({ userId: user.userId, userName, mobileNo: user.mobile, result: 'INVALID_PASSWORD', channel: 'PASSWORD' })
+        await insertLoginLog({ userId: user.userId, userName, mobileNo: user.mobile, result: '0', channel: 'PASSWORD' })
 
         return {
           status_code: 301,
