@@ -1,4 +1,3 @@
-const crypto = require('crypto')
 const dayjs = require('dayjs')
 const axios = require('axios')
 const encode = require('../../../function/encode')
@@ -46,7 +45,6 @@ const insertLoginLog = async ({ userId, userName, mobileNo, result, channel }) =
 const insertBoLoginLog = async ({ staffId, userName, mobile, result, channel }) => {
   try {
     await honnoi('bo_login_log').insert({
-      logInId: `BOLOG${dayjs().format('YYYYMMDD')}-${crypto.randomUUID()}`,
       createDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       staffId: staffId || '',
       userName: userName || '',
