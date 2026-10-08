@@ -205,7 +205,7 @@ module.exports = {
       const user = await honnoi('bo_user').where({ userName }).first()
 
       if (!user) {
-        await insertBoLoginLog({ userName, result: '0', channel: 'PASSWORD' })
+        await insertBoLoginLog({ userName, result: '0', channel: 'HNBO' })
 
         return {
           status_code: 301,
@@ -224,7 +224,7 @@ module.exports = {
           updateDate: now()
         })
 
-        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '0', channel: 'PASSWORD' })
+        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '0', channel: 'HNBO' })
 
         return {
           status_code: 301,
@@ -248,7 +248,7 @@ module.exports = {
           updateDate: now()
         })
 
-        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '0', channel: 'PASSWORD' })
+        await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '0', channel: 'HNBO' })
 
         return {
           status_code: 301,
@@ -284,7 +284,7 @@ module.exports = {
         profileImgUrl: user.profileImgUrl || null
       }
 
-      await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '1', channel: 'PASSWORD' })
+      await insertBoLoginLog({ staffId: user.staffId, userName, mobile: user.mobile, result: '1', channel: 'HNBO' })
 
       return {
         status_code: 200,
