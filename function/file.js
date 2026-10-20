@@ -7,6 +7,7 @@ const bucket = storage.bucket(process.env.GCS_BUCKET_NAME)
 const BANK_FOLDER_BY_TYPE = {
     partner_user: process.env.GCS_FOLDER_PARTNER_PROFILE,
     partner_info: process.env.GCS_FOLDER_PARTNER_INFO,
+    partner_message: process.env.GCS_FOLDER_PARTNER_MESSAGE,
 }
 
 const uploadProfileImage = async (data) => {

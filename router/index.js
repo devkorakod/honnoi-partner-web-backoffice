@@ -7,5 +7,6 @@ router.use("/2fa", require("../api/two_fa/routes"))
 router.use("/location", require("../api/location/routes"))
 router.use("/getData", require("../api/getData/routes"))
 router.use("/partnerInfo", require("../api/partnerInfo/routes"))
+router.use("/partnerMessage", require("../api/partnerMessage/routes"))
 
 module.exports = router

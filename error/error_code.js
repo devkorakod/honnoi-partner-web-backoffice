@@ -37,5 +37,6 @@ module.exports = {
   10029: "segment_not_found",
   10030: "partner_not_found",
   10031: "partner_name_already_exists",
-  10032: "invalid_location"
+  10032: "invalid_location",
+  10033: "message_not_found"
 }
