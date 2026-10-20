@@ -6,6 +6,7 @@ const bucket = storage.bucket(process.env.GCS_BUCKET_NAME)
 
 const BANK_FOLDER_BY_TYPE = {
     partner_user: process.env.GCS_FOLDER_PARTNER_PROFILE,
+    partner_info: process.env.GCS_FOLDER_PARTNER_INFO,
 }
 
 const uploadProfileImage = async (data) => {
@@ -91,4 +92,94 @@ const deleteProfileImage = async (data) => {
     }
 }
 
-module.exports = { uploadProfileImage, deleteProfileImage }
+// generic upload for partner documents/images — accepts any base64 data url
+// (pdf, png, jpg, ...) and stores it under <folder>/<pathfile>/<subfolder>/
+const uploadDocument = async (data) => {
+    return new Promise(async (resolve) => {
+        try {
+            const { pathfile, type, subfolder, originalname } = data || {}
+            const folder = BANK_FOLDER_BY_TYPE[type]
+            if (!folder || !pathfile || !subfolder) {
+                return resolve({
+                    "status_code": "301",
+                    "status_phrase": "FAIL",
+                    "message": "invalid upload target"
+                })
+            }
+
+            const match = /^data:([\w.+-]+\/([\w.+-]+));base64,(.+)$/.exec(data.file || '')
+            if (!match) {
+                return resolve({
+                    "status_code": "301",
+                    "status_phrase": "FAIL",
+                    "message": "file must be a base64 data url"
+                })
+            }
+            const contentType = match[1]
+            const ext = match[2] === 'jpeg' ? 'jpg' : match[2]
+            const buffer = Buffer.from(match[3], 'base64')
+            const filename = `${originalname}_${crypto.randomUUID()}.${ext}`
+
+            var blob = bucket.file(`${folder}/${pathfile}/${subfolder}/${filename}`)
+            const blobStream = blob.createWriteStream({
+                resumable: false,
+                contentType,
+            })
+            blobStream.on("error", (err) => {
+                console.log({ message: err.message })
+                return resolve({
+                    "status_code": "301",
+                    "status_phrase": "FAIL",
+                    "message": err.message
+                })
+            })
+            blobStream.on("finish", async () => {
+                const publicUrl = format(
+                    `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+                )
+                return resolve({
+                    message: "Uploaded the file successfully: " + filename,
+                    url: publicUrl,
+                })
+            })
+            blobStream.end(buffer)
+        } catch (error) {
+            console.log(error)
+            return resolve({
+                "status_code": "301",
+                "status_phrase": "FAIL",
+                "message": `Correct Data Error!!`
+            })
+        }
+    })
+}
+
+const deleteDocument = async (data) => {
+    try {
+        const { url, pathfile, type, subfolder } = data || {}
+        if (!url || !pathfile || !type || !subfolder) return false
+
+        const folder = BANK_FOLDER_BY_TYPE[type]
+        if (!folder) return false
+
+        // same guard as deleteProfileImage: only delete inside this record's own folder
+        const expectedPrefix = `https://storage.googleapis.com/${bucket.name}/${folder}/${pathfile}/${subfolder}/`
+        if (!String(url).startsWith(expectedPrefix)) {
+            console.log('skip deleteDocument: url outside expected path =>', url)
+            return false
+        }
+
+        const filename = String(url).replace(`https://storage.googleapis.com/${bucket.name}/`, '')
+        const blob = bucket.file(filename)
+        const [exists] = await blob.exists()
+        if (!exists) return false
+
+        await blob.delete()
+        return true
+    } catch (error) {
+        console.log('deleteDocument error =>', error)
+        return false
+    }
+}
+
+module.exports = { uploadProfileImage, deleteProfileImage, uploadDocument, deleteDocument }

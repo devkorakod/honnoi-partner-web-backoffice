@@ -48,7 +48,7 @@ const insertBoLoginLog = async ({ staffId, userName, mobile, result, channel }) 
       createDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       staffId: staffId || '',
       userName: userName || '',
-      mobile: mobile || '',
+      // mobile: mobile || '',
       result: result || '',
       channel: channel || ''
     })

@@ -31,5 +31,11 @@ module.exports = {
   10024: "invalid_pending_token",
   10025: "pending_token_expired",
   10026: "failed_to_send_otp_sms",
-  10027: "mobile_required"
+  10027: "mobile_required",
+
+  10028: "business_type_not_found",
+  10029: "segment_not_found",
+  10030: "partner_not_found",
+  10031: "partner_name_already_exists",
+  10032: "invalid_location"
 }
