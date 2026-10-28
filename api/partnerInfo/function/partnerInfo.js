@@ -92,8 +92,9 @@ const partnerInfoQuery = () =>
       honnoi.raw("TRIM(CONCAT(COALESCE(bu.name, ''), ' ', COALESCE(bu.lastname, ''))) as memberCreateName")
     );
 
-const findDuplicateName = async ({ partnerNameLocal, partnerNameEN, excludeId }) => {
-  if (!partnerNameLocal && !partnerNameEN) return null;
+// returns the name fields that already belong to another partner, e.g. ["partnerNameLocal"]
+const findDuplicateNames = async ({ partnerNameLocal, partnerNameEN, excludeId }) => {
+  if (!partnerNameLocal && !partnerNameEN) return [];
 
   const query = honnoi("partner_info").where(function () {
     if (partnerNameLocal) this.orWhere("partnerNameLocal", partnerNameLocal);
@@ -102,13 +103,22 @@ const findDuplicateName = async ({ partnerNameLocal, partnerNameEN, excludeId })
   if (excludeId) query.andWhere("id", "!=", excludeId);
 
   const rows = await query;
-  if (rows.length === 0) return null;
+  if (rows.length === 0) return [];
 
   const duplicated = [];
   if (partnerNameLocal && rows.some((r) => r.partnerNameLocal === partnerNameLocal)) duplicated.push("partnerNameLocal");
   if (partnerNameEN && rows.some((r) => r.partnerNameEN === partnerNameEN)) duplicated.push("partnerNameEN");
-  return duplicated.join(" and ");
+  return duplicated;
 };
+
+const duplicateNameError = (duplicated) => ({
+  status_code: 10031,
+  status_phrase: status_code[10031],
+  message: `duplicate : ${duplicated.join(" and ")}`,
+});
+
+// escapes LIKE wildcards so user input is matched literally
+const escapeLike = (value) => String(value).replace(/[\\%_]/g, (c) => `\\${c}`);
 
 // checks companySegment / companyBusinessType against their master tables
 const validateMasterData = async ({ companySegment, companyBusinessType }) => {
@@ -244,10 +254,8 @@ module.exports = {
       if (!isDataUrlList(fileList)) return validationError("file must be an array of base64 data urls");
       if (!isDataUrlList(imageList)) return validationError("image must be an array of base64 data urls");
 
-      const duplicated = await findDuplicateName(fields);
-      if (duplicated) {
-        return { status_code: 10031, status_phrase: status_code[10031], message: `duplicate : ${duplicated}` };
-      }
+      const duplicated = await findDuplicateNames(fields);
+      if (duplicated.length) return duplicateNameError(duplicated);
 
       const masterError = await validateMasterData(fields);
       if (masterError) return masterError;
@@ -314,10 +322,8 @@ module.exports = {
         return { status_code: 10030, status_phrase: status_code[10030], message: status_code[10030] };
       }
 
-      const duplicated = await findDuplicateName({ ...fields, excludeId: id });
-      if (duplicated) {
-        return { status_code: 10031, status_phrase: status_code[10031], message: `duplicate : ${duplicated}` };
-      }
+      const duplicated = await findDuplicateNames({ ...fields, excludeId: id });
+      if (duplicated.length) return duplicateNameError(duplicated);
 
       const masterError = await validateMasterData(fields);
       if (masterError) return masterError;
@@ -402,7 +408,7 @@ module.exports = {
       const safeSort = String(sortBy).toLowerCase() === "asc" ? "asc" : "desc";
 
       // a date-only value (YYYY-MM-DD) covers the whole day
-      const isDateOnly = (v) => /^d{4}-d{2}-d{2}$/.test(String(v));
+      const isDateOnly = (v) => /^\d{4}-\d{2}-\d{2}$/.test(String(v));
       let fromDate = null;
       let toDate = null;
       if (createStart) {
@@ -453,6 +459,116 @@ module.exports = {
         total: Number(count || 0),
         totalPages: Math.ceil(Number(count || 0) / ps),
         data: rows.map(mapPartnerInfoRow),
+      };
+    } catch (error) {
+      console.log(error);
+      return fail();
+    }
+  },
+
+  searchMemberRefId: async function (data) {
+    try {
+      data = await getPayload(data);
+      const { memberRefId = "", exact = false, page = 1, pageSize = 20 } = data || {};
+      const refId = String(memberRefId ?? "").trim();
+
+      if (!refId) return validationError("missing memberRefId");
+      if (refId.length > MEMBER_ID_MAX_LENGTH) {
+        return validationError(`memberRefId must be at most ${MEMBER_ID_MAX_LENGTH} characters`);
+      }
+
+      const pg = Math.max(parseInt(page, 10) || 1, 1);
+      const ps = Math.min(Math.max(parseInt(pageSize, 10) || 20, 1), 200);
+
+      const baseQuery = partnerInfoQuery();
+      if (exact === true) {
+        baseQuery.where("pi.memberRefId", refId);
+      } else {
+        baseQuery.where("pi.memberRefId", "like", `%${escapeLike(refId)}%`);
+      }
+
+      const [{ count }] = await baseQuery.clone().clearSelect().count({ count: "*" });
+
+      const rows = await baseQuery
+        .clone()
+        .orderBy("pi.createDate", "desc")
+        .limit(ps)
+        .offset((pg - 1) * ps);
+
+      return {
+        status_code: 200,
+        status_phrase: status_code[200],
+        page: pg,
+        pageSize: ps,
+        total: Number(count || 0),
+        totalPages: Math.ceil(Number(count || 0) / ps),
+        data: rows.map(mapPartnerInfoRow),
+      };
+    } catch (error) {
+      console.log(error);
+      return fail();
+    }
+  },
+
+  // lets the create / edit form check a name before submitting;
+  // send excludeId when editing so the partner's own row is not counted
+  checkPartnerName: async function (data) {
+    try {
+      data = await getPayload(data);
+      const { excludeId } = data || {};
+      const partnerNameLocal = data?.partnerNameLocal ? String(data.partnerNameLocal) : "";
+      const partnerNameEN = data?.partnerNameEN ? String(data.partnerNameEN) : "";
+
+      if (!partnerNameLocal && !partnerNameEN) {
+        return validationError("missing partnerNameLocal or partnerNameEN");
+      }
+
+      const duplicateFields = await findDuplicateNames({ partnerNameLocal, partnerNameEN, excludeId });
+
+      // null = that name was not sent, so it was not checked
+      const availability = (key, value) => (value ? !duplicateFields.includes(key) : null);
+
+      return {
+        status_code: 200,
+        status_phrase: status_code[200],
+        duplicated: duplicateFields.length > 0,
+        duplicateFields,
+        available: {
+          partnerNameLocal: availability("partnerNameLocal", partnerNameLocal),
+          partnerNameEN: availability("partnerNameEN", partnerNameEN),
+        },
+      };
+    } catch (error) {
+      console.log(error);
+      return fail();
+    }
+  },
+
+  checkSaleAgent: async function (data) {
+    try {
+      data = await getPayload(data);
+      const saleAgentId = String(data?.saleAgentId ?? "").trim();
+
+      if (!saleAgentId) return validationError("missing saleAgentId");
+
+      // TODO: confirm sale_agent column names against the real schema
+      const agent = await honnoi("sale_agent")
+        .where({ saleAgentId })
+        .first("firstNameTH", "lastNameTH", "firstNameEN", "lastNameEN", "refCode");
+      if (!agent) {
+        return { status_code: 10034, status_phrase: status_code[10034], message: "result not found" };
+      }
+
+      const fullName = (first, last) => [first, last].filter(Boolean).join(" ").trim();
+
+      return {
+        status_code: 200,
+        status_phrase: status_code[200],
+        data: {
+          nameTH: fullName(agent.firstNameTH, agent.lastNameTH),
+          nameEN: fullName(agent.firstNameEN, agent.lastNameEN),
+          refCode: agent.refCode,
+        },
       };
     } catch (error) {
       console.log(error);
