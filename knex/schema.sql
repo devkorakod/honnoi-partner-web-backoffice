@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `partner_message` (
   `updateDate` DATETIME NOT NULL,
   `deleteDate` DATETIME NULL,
   KEY `idx_partner_message_list` (`deleteDate`, `createDate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS `partner_message_file` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `partner_message_file` (
   `fileSize` INT NOT NULL DEFAULT 0,
   `createDate` DATETIME NOT NULL,
   KEY `idx_pmf_messageId` (`messageId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS `partner_message_recipient` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `partner_message_recipient` (
   `createDate` DATETIME NOT NULL,
   UNIQUE KEY `uq_pmr_message_partner` (`messageId`, `partnerInfoId`),
   KEY `idx_pmr_inbox` (`partnerInfoId`, `readStatus`, `createDate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- links a partner login to its company (used to scope the message inbox)
 -- ALTER TABLE `partner_user` ADD COLUMN `partnerInfoId` INT NULL AFTER `userId`,

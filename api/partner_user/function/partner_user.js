@@ -53,6 +53,20 @@ const generatePartnerUserId = async () => {
   return `${prefix}${String(next).padStart(6, "0")}`;
 };
 
+// partnerId is partner_info.id; companyName keeps a copy of the partner name
+// because the login profile still reads it from partner_user
+const getPartnerInfo = (partnerId) => {
+  const id = parseInt(partnerId, 10);
+  if (!Number.isInteger(id) || id <= 0) return null;
+  return honnoi("partner_info").where({ id }).first("id", "partnerNameLocal");
+};
+
+const partnerNotFound = () => ({
+  status_code: 10030,
+  status_phrase: status_code[10030],
+  message: status_code[10030],
+});
+
 module.exports = {
   createPartnerUser: async function (data) {
     try {
@@ -67,7 +81,7 @@ module.exports = {
         userGroup = "",
         userLevel = "",
         userClass = "",
-        companyName = "",
+        partnerId,
         department = "",
         userStatus = "1",
       } = data || {};
@@ -79,6 +93,17 @@ module.exports = {
           message: "missing userName, password or email",
         };
       }
+
+      if (!partnerId) {
+        return {
+          status_code: 10007,
+          status_phrase: status_code[10007],
+          message: "missing partnerId",
+        };
+      }
+
+      const partner = await getPartnerInfo(partnerId);
+      if (!partner) return partnerNotFound();
 
       const existing = await honnoi("partner_user")
         .where((q) => {
@@ -121,7 +146,8 @@ module.exports = {
         loginBlock: "0",
         userStatus: String(userStatus ?? "1").slice(0, 10),
         changePassword: "1",
-        companyName: String(companyName || "").slice(0, 255),
+        partnerInfoId: partner.id,
+        companyName: String(partner.partnerNameLocal || "").slice(0, 100),
         department: String(department || "").slice(0, 255),
         createDate,
         updateDate: createDate,
@@ -157,7 +183,7 @@ module.exports = {
         userLevel,
         userClass,
         userStatus,
-        companyName,
+        partnerId,
         department,
       } = data || {};
 
@@ -206,6 +232,12 @@ module.exports = {
         }
       }
 
+      let partner = null;
+      if (partnerId !== undefined) {
+        partner = await getPartnerInfo(partnerId);
+        if (!partner) return partnerNotFound();
+      }
+
       const payload = { updateDate: now() };
       if (name !== undefined) payload.name = String(name || "").slice(0, 255);
       if (lastname !== undefined) payload.lastname = String(lastname || "").slice(0, 255);
@@ -216,7 +248,10 @@ module.exports = {
       if (userLevel !== undefined) payload.userLevel = String(userLevel || "").slice(0, 10);
       if (userClass !== undefined) payload.userClass = String(userClass || "").slice(0, 10);
       if (userStatus !== undefined) payload.userStatus = String(userStatus || "0").slice(0, 10);
-      if (companyName !== undefined) payload.companyName = String(companyName || "").slice(0, 255);
+      if (partner) {
+        payload.partnerInfoId = partner.id;
+        payload.companyName = String(partner.partnerNameLocal || "").slice(0, 100);
+      }
       if (department !== undefined) payload.department = String(department || "").slice(0, 255);
 
       await honnoi("partner_user").where({ userId }).update(payload);
@@ -284,6 +319,7 @@ module.exports = {
         userName = "",
         email = "",
         companyName = "",
+        partnerId = "",
         department = "",
         userStatus = "",
         includeDeleted = false,
@@ -314,6 +350,7 @@ module.exports = {
       if (userName) baseQuery.andWhere("userName", "like", `%${userName}%`);
       if (email) baseQuery.andWhere("email", "like", `%${email}%`);
       if (companyName) baseQuery.andWhere("companyName", "like", `%${companyName}%`);
+      if (partnerId !== "" && partnerId !== null) baseQuery.andWhere("partnerInfoId", parseInt(partnerId, 10) || 0);
       if (department) baseQuery.andWhere("department", "like", `%${department}%`);
       if (userStatus !== undefined && userStatus !== null && userStatus !== "") {
         baseQuery.andWhere("userStatus", userStatus);

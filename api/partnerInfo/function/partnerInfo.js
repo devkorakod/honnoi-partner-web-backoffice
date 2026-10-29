@@ -551,10 +551,9 @@ module.exports = {
 
       if (!saleAgentId) return validationError("missing saleAgentId");
 
-      // TODO: confirm sale_agent column names against the real schema
       const agent = await honnoi("sale_agent")
-        .where({ saleAgentId })
-        .first("firstNameTH", "lastNameTH", "firstNameEN", "lastNameEN", "refCode");
+        .where({ agentId: saleAgentId })
+        .first("firstNameLocal", "lastNameLocal", "firstNameEN", "lastNameEN", "refCode");
       if (!agent) {
         return { status_code: 10034, status_phrase: status_code[10034], message: "result not found" };
       }
@@ -565,7 +564,7 @@ module.exports = {
         status_code: 200,
         status_phrase: status_code[200],
         data: {
-          nameTH: fullName(agent.firstNameTH, agent.lastNameTH),
+          nameTH: fullName(agent.firstNameLocal, agent.lastNameLocal),
           nameEN: fullName(agent.firstNameEN, agent.lastNameEN),
           refCode: agent.refCode,
         },

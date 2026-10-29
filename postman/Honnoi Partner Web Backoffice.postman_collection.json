@@ -77,7 +77,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userName\": \"partner02\",\n  \"password\": \"earthH01\"\n}",
+              "raw": "{\n  \"userName\": \"asha@partner\",\n  \"password\": \"P@asha123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -116,6 +116,26 @@
           "response": []
         },
         {
+          "name": "google/login (alias of /auth/google - open in browser, not Send)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google",
+                "login"
+              ]
+            },
+            "description": "เหมือน /auth/google ทุกอย่าง (passport google, session: false) ใช้เปิดใน browser"
+          },
+          "response": []
+        },
+        {
           "name": "google/callback (browser redirect target only)",
           "request": {
             "method": "GET",
@@ -131,6 +151,26 @@
                 "callback"
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "google/fail (browser redirect target only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/fail",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google",
+                "fail"
+              ]
+            },
+            "description": "หน้าที่ google OAuth redirect มาเมื่อ login ไม่สำเร็จ ไม่ต้องใช้ token"
           },
           "response": []
         },
@@ -157,7 +197,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"SMS\"\n}",
+              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"EMAIL\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -201,7 +241,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"SMS\",\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"243604\"\n}",
+              "raw": "{\n  \"pendingToken\": \"{{pendingToken}}\",\n  \"method\": \"EMAIL\",\n  \"refCode\": \"{{refCode}}\",\n  \"otp\": \"116136\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -254,7 +294,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John\",\n  \"lastname\": \"Doe\",\n  \"mobile\": \"0812345678\",\n  \"userName\": \"partner03\",\n  \"password\": \"earthH01\",\n  \"email\": \"partner03@example.com\",\n  \"userGroup\": \"PT\",\n  \"userLevel\": \"ST\",\n  \"userClass\": \"A\",\n  \"companyName\": \"Acme Co., Ltd.\",\n  \"department\": \"Sales\"\n}",
+              "raw": "{\n  \"name\": \"John\",\n  \"lastname\": \"Doe\",\n  \"mobile\": \"0812345678\",\n  \"userName\": \"partner03\",\n  \"password\": \"earthH01\",\n  \"email\": \"partner03@example.com\",\n  \"userGroup\": \"PT\",\n  \"userLevel\": \"ST\",\n  \"userClass\": \"A\",\n  \"partnerId\": 3,\n  \"department\": \"Sales\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -290,7 +330,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"companyName\": \"Acme Co., Ltd. (updated)\",\n  \"department\": \"Partnerships\"\n}",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"partnerId\": 3,\n  \"department\": \"Partnerships\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -362,7 +402,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyName\": \"Acme\",\n  \"page\": 1,\n  \"pageSize\": 20\n}",
+              "raw": "{\n  \"companyName\": \"\",\n  \"partnerId\": 3,\n  \"page\": 1,\n  \"pageSize\": 20\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -759,7 +799,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"code\": \"349836\"\n}",
+              "raw": "{\n  \"code\": \"250403\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -813,6 +853,1116 @@
                 "disable"
               ]
             }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "location",
+      "item": [
+        {
+          "name": "location/getThailandState",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/location/getThailandState",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "location",
+                "getThailandState"
+              ]
+            },
+            "description": "รายชื่อจังหวัดทั้งหมด (thailand_state) — ใช้ token staff หรือ partner ก็ได้"
+          },
+          "response": []
+        },
+        {
+          "name": "location/getThailandDistrict",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/location/getThailandDistrict",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "location",
+                "getThailandDistrict"
+              ]
+            },
+            "description": "รายชื่ออำเภอทั้งหมด (thailand_district)"
+          },
+          "response": []
+        },
+        {
+          "name": "location/getThailandSubDistrict",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/location/getThailandSubDistrict",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "location",
+                "getThailandSubDistrict"
+              ]
+            },
+            "description": "รายชื่อตำบลทั้งหมด (thailand_sub_district)"
+          },
+          "response": []
+        },
+        {
+          "name": "location/getThailandDistrictByStateId",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/location/getThailandDistrictByStateId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "location",
+                "getThailandDistrictByStateId"
+              ]
+            },
+            "description": "อำเภอในจังหวัดที่ระบุ"
+          },
+          "response": []
+        },
+        {
+          "name": "location/getThailandSubDistrictByDistrictId",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"district_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/location/getThailandSubDistrictByDistrictId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "location",
+                "getThailandSubDistrictByDistrictId"
+              ]
+            },
+            "description": "ตำบลในอำเภอที่ระบุ"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "getData",
+      "item": [
+        {
+          "name": "getData/getCompanyBusinessType",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/getData/getCompanyBusinessType",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "getData",
+                "getCompanyBusinessType"
+              ]
+            },
+            "description": "ประเภทธุรกิจทั้งหมด (company_business_type) — ใช้กับ partner_info.companyBusinessType"
+          },
+          "response": []
+        },
+        {
+          "name": "getData/getCompanyBusinessTypeById",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"business_id\": \"BIZ001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/getData/getCompanyBusinessTypeById",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "getData",
+                "getCompanyBusinessTypeById"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getData/getCompanySegment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/getData/getCompanySegment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "getData",
+                "getCompanySegment"
+              ]
+            },
+            "description": "segment ทั้งหมด (company_segment) — ใช้กับ partner_info.companySegment"
+          },
+          "response": []
+        },
+        {
+          "name": "getData/getCompanySegmentById",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"segmentId\": \"CSG001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/getData/getCompanySegmentById",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "getData",
+                "getCompanySegmentById"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "partnerInfo (staff-only)",
+      "item": [
+        {
+          "name": "partnerInfo/createPartnerInfo (staff)",
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "try {\n    const json = pm.response.json();\n    if (json.id) pm.collectionVariables.set('partnerInfoId', json.id);\n} catch (e) {}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"partnerNameLocal\": \"บริษัท ทดสอบ จำกัด\",\n  \"partnerNameEN\": \"Test Co., Ltd.\",\n  \"companySegment\": \"CSG001\",\n  \"companyType\": \"\",\n  \"companyBusinessType\": \"BIZ001\",\n  \"companyTaxId\": \"0105500000000\",\n  \"address1\": \"99/9 ถนนอุตรกิจ\",\n  \"address2\": \"\",\n  \"moo\": \"\",\n  \"village\": \"\",\n  \"stateId\": \"1\",\n  \"districtId\": \"1\",\n  \"subdistrictId\": \"6513\",\n  \"countryId\": \"764\",\n  \"countryCode\": \"THA\",\n  \"zipCode\": \"81000\",\n  \"latitude\": 8.0863,\n  \"longitude\": 98.9063,\n  \"partnerStatus\": \"1\",\n  \"memberRefId\": \"\",\n  \"refCode\": \"\",\n  \"file\": [\"data:application/pdf;base64,JVBERi0xLjQKJSVFT0YK\"],\n  \"image\": [\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/createPartnerInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "createPartnerInfo"
+              ]
+            },
+            "description": "สร้าง partner_info (staff only). stateText/districtText/subdistrictText ระบบเติมจาก thailand_* ให้เอง, memberCreateId = staffId จาก token. file/image เป็น array ของ base64 data url (optional)"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/updatePartnerInfo (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{partnerInfoId}}\",\n  \"partnerNameEN\": \"Test Co., Ltd. (updated)\",\n  \"partnerStatus\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/updatePartnerInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "updatePartnerInfo"
+              ]
+            },
+            "description": "แก้ไขเฉพาะ field ที่ส่งมา (partial update). ไฟล์/รูป/โปรไฟล์ใช้ endpoint แยก"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/getPartnerInfo (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{partnerInfoId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/getPartnerInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "getPartnerInfo"
+              ]
+            },
+            "description": "คืนข้อมูล partner พร้อม segmentName, businessName, memberCreateName"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/searchPartnerInfo (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"partnerName\": \"\",\n  \"companyTaxId\": \"\",\n  \"companySegment\": \"\",\n  \"companyBusinessType\": \"\",\n  \"stateId\": \"\",\n  \"partnerStatus\": \"\",\n  \"page\": 1,\n  \"pageSize\": 20,\n  \"orderBy\": \"createDate\",\n  \"sortBy\": \"desc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/searchPartnerInfo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "searchPartnerInfo"
+              ]
+            },
+            "description": "ค้นหาแบบแบ่งหน้า. partnerName ค้นทั้ง partnerNameLocal และ partnerNameEN"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/searchMemberRefId (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberRefId\": \"\",\n  \"exact\": false,\n  \"page\": 1,\n  \"pageSize\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/searchMemberRefId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "searchMemberRefId"
+              ]
+            },
+            "description": "ค้นหา partner จาก memberRefId (สูงสุด 13 ตัวอักษร). exact = true ค้นแบบตรงตัว, false ค้นแบบ LIKE. แบ่งหน้า เรียง createDate desc"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/checkPartnerName (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"partnerNameLocal\": \"บริษัท ทดสอบ จำกัด\",\n  \"partnerNameEN\": \"Test Co., Ltd.\",\n  \"excludeId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/checkPartnerName",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "checkPartnerName"
+              ]
+            },
+            "description": "เช็คชื่อซ้ำก่อน submit ฟอร์ม create/edit. ส่ง partnerNameLocal หรือ partnerNameEN อย่างน้อย 1 ตัว, ตอน edit ให้ส่ง excludeId = id ของตัวเองเพื่อไม่นับแถวตัวเอง. คืน duplicated, duplicateFields, available.{partnerNameLocal, partnerNameEN} (null = ไม่ได้ส่งชื่อนั้นมา)"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/checkSaleAgent (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saleAgentId\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/checkSaleAgent",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "checkSaleAgent"
+              ]
+            },
+            "description": "ตรวจ saleAgentId จากตาราง sale_agent. คืน data.{nameTH, nameEN, refCode}, ไม่เจอคืน status_code 10034"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/updatePartnerFile (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{partnerInfoId}}\",\n  \"file\": [\"data:application/pdf;base64,JVBERi0xLjQKJSVFT0YK\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/updatePartnerFile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "updatePartnerFile"
+              ]
+            },
+            "description": "แทนที่ไฟล์เอกสารทั้งชุด (fileCorporate); ไฟล์เก่าถูกลบหลังบันทึกชุดใหม่สำเร็จ"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/updatePartnerImage (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{partnerInfoId}}\",\n  \"image\": [\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/updatePartnerImage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "updatePartnerImage"
+              ]
+            },
+            "description": "แทนที่รูปทั้งชุด (imageCorporate)"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerInfo/uploadPartnerProfileImage (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{partnerInfoId}}\",\n  \"image\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerInfo/uploadPartnerProfileImage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerInfo",
+                "uploadPartnerProfileImage"
+              ]
+            },
+            "description": "อัปโหลดรูปโปรไฟล์ partner (profileImage)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "partnerMessage (staff-only)",
+      "item": [
+        {
+          "name": "partnerMessage/createPartnerMessage PARTNER (staff)",
+          "event": [
+            {
+              "script": {
+                "id": "f8cc6af5-2a6f-4090-9385-0f356ac154e0",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.id) pm.collectionVariables.set(\"messageId\", json.id);",
+                  "} catch (e) {}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"PARTNER\",\n  \"partnerInfoIds\": [1],\n  \"priority\": \"URGENT\",\n  \"title\": \"เอกสารสัญญาพาร์ทเนอร์และการยืนยันบัญชีรับเงินคอมมิชชัน\",\n  \"body\": \"เรียนพาร์ทเนอร์ ทางฝ่ายบัญชีได้รับเอกสารหนังสือรับรองและข้อมูลบัญชีของท่านเรียบร้อยแล้ว\",\n  \"files\": [\n    {\n      \"fileName\": \"contract.pdf\",\n      \"file\": \"data:application/pdf;base64,JVBERi0xLjQK\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/createPartnerMessage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "createPartnerMessage"
+              ]
+            },
+            "description": "ส่งข้อความหา partner ที่ระบุ (partner_info.id). priority: NORMAL / IMPORTANT / URGENT. files ≤ 10 ไฟล์, ไฟล์ละ ≤ 10MB (base64 data url). Response มี `id` → เก็บลง collection variable `messageId`"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/createPartnerMessage ALL (staff)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.id) pm.collectionVariables.set(\"messageId\", json.id);",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"ALL\",\n  \"priority\": \"IMPORTANT\",\n  \"title\": \"ยินดีต้อนรับสู่โปรแกรมพาร์ทเนอร์ Honnoi AI 2026\",\n  \"body\": \"ยินดีต้อนรับท่านเข้าสู่ระบบพาร์ทเนอร์อย่างเป็นทางการ\",\n  \"files\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/createPartnerMessage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "createPartnerMessage"
+              ]
+            },
+            "description": "Broadcast: ส่งหาทุก partner_info ที่ partnerStatus = '1' ณ ตอนส่ง"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/searchPartnerMessage (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"search\": \"\",\n  \"targetType\": \"\",\n  \"readStatus\": \"\",\n  \"priority\": \"\",\n  \"page\": 1,\n  \"pageSize\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/searchPartnerMessage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "searchPartnerMessage"
+              ]
+            },
+            "description": "ตารางข้อความ (1 แถว = 1 ข้อความ). search ค้น title/body/ชื่อ partner. targetType: ALL/PARTNER. readStatus: 1 = ทุก partner เปิดแล้ว, 0 = ยังมีคนไม่เปิด. priority: NORMAL/IMPORTANT/URGENT"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/getPartnerMessageSummary (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/getPartnerMessageSummary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "getPartnerMessageSummary"
+              ]
+            },
+            "description": "การ์ด 3 ใบ: totalMessage / totalRead / totalUnread (นับเป็นข้อความ)"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/getPartnerMessage (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{messageId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/getPartnerMessage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "getPartnerMessage"
+              ]
+            },
+            "description": "รายละเอียดข้อความ + files + totalRecipient / totalRead / totalUnread"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/getPartnerMessageRecipient (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{staffToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{messageId}}\",\n  \"readStatus\": \"\",\n  \"search\": \"\",\n  \"page\": 1,\n  \"pageSize\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/getPartnerMessageRecipient",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "getPartnerMessageRecipient"
+              ]
+            },
+            "description": "รายชื่อ partner ที่ได้รับข้อความนี้ พร้อม readStatus / readDate / readByName (ยังไม่อ่านขึ้นก่อน)"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/deletePartnerMessage (staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staffToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{messageId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/deletePartnerMessage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "deletePartnerMessage"
+              ]
+            },
+            "description": "soft delete (set deleteDate) — ข้อความหายจาก inbox ของทุก partner"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "partner inbox",
+      "item": [
+        {
+          "name": "partnerMessage/getInboxCount (partner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{partnerToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/getInboxCount",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "getInboxCount"
+              ]
+            },
+            "description": "ตัวเลขบน tab: total / unread / read ของบริษัทที่ login อยู่ (partner_user.partnerInfoId)"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/searchInbox (partner)",
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data && json.data.length) pm.collectionVariables.set(\"recipientId\", json.data[0].recipientId);",
+                  "} catch (e) {}"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partnerToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tab\": \"all\",\n  \"search\": \"\",\n  \"page\": 1,\n  \"pageSize\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/searchInbox",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "searchInbox"
+              ]
+            },
+            "description": "tab: all / unread / read. แถวแรกของผลลัพธ์จะถูกเก็บเป็น `recipientId`"
+          },
+          "response": []
+        },
+        {
+          "name": "partnerMessage/readInbox (partner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              },
+              {
+                "value": "Bearer {{partnerToken}}",
+                "key": "Authorization"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipientId\": \"{{recipientId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/partnerMessage/readInbox",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "partnerMessage",
+                "readInbox"
+              ]
+            },
+            "description": "เปิดอ่านข้อความ (คืนรายละเอียด + files) และ mark read ครั้งแรก → totalRead +1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "health check",
+      "item": [
+        {
+          "name": "apitest (health check, no auth)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/apitest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "apitest"
+              ]
+            },
+            "description": "health check ไม่ต้องใช้ token คืน status_code 200, service_tag, message \"API TEST SUCCESS\""
           },
           "response": []
         }
